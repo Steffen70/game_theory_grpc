@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option csharp_namespace = "Seventy.GameTheory.PlayingField";
+option php_namespace = "PlayingField";
 
 package playing_field;
 

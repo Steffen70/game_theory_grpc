@@ -1,2 +1,4 @@
 # Mac specific directory attributes
 **/.DS_Store
+# Visual Studio Code specific directory
+.vscode/

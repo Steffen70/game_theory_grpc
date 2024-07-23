@@ -1,17 +1,26 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography.X509Certificates;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Seventy.GameTheory.PlayingField.Extensions;
+using Seventy.GameTheory.PlayingField.Model;
 using Seventy.GameTheory.Strategy;
 using static Seventy.GameTheory.Strategy.Strategy;
 
 namespace Seventy.GameTheory.PlayingField.Services;
 
-public class PlayingFieldService(ILogger<PlayingFieldService> logger) : PlayingField.PlayingFieldBase
+public class PlayingFieldService : PlayingField.PlayingFieldBase
 {
-    private readonly ConcurrentDictionary<string, StrategyInfo> _strategies = new();
+    private static readonly ConcurrentDictionary<string, StrategyInfo> _strategies = new();
+    private readonly ILogger<PlayingFieldService> _logger;
+    private readonly HttpClient _httpClient;
 
+    public PlayingFieldService(ILogger<PlayingFieldService> logger, IHttpClientFactory httpClientFactory)
+    {
+        _logger = logger;
+        _httpClient = httpClientFactory.CreateClient("customHttpClient");
+    }
 
     public override Task<Empty> Subscribe(StrategyInfo info, ServerCallContext context)
     {
@@ -19,7 +28,7 @@ public class PlayingFieldService(ILogger<PlayingFieldService> logger) : PlayingF
         _strategies[info.Name] = info;
 
         // Log the subscription
-        logger.LogInformation($"Strategy {info.Name} subscribed.");
+        _logger.LogInformation($"Strategy {info.Name} subscribed.");
 
         // Return an empty response
         return Task.FromResult(new Empty());
@@ -39,9 +48,9 @@ public class PlayingFieldService(ILogger<PlayingFieldService> logger) : PlayingF
         if (!_strategies.TryGetValue(request.StrategyA, out var strategyA) || !_strategies.TryGetValue(request.StrategyB, out var strategyB))
             throw new RpcException(new Status(StatusCode.NotFound, "One or both strategies not found."));
 
-        // Create the gRPC channels and clients
-        var channelA = GrpcChannel.ForAddress(strategyA.Address);
-        var channelB = GrpcChannel.ForAddress(strategyB.Address);
+
+        var channelA = GrpcChannel.ForAddress(strategyA.Address, new GrpcChannelOptions { HttpClient = _httpClient });
+        var channelB = GrpcChannel.ForAddress(strategyB.Address, new GrpcChannelOptions { HttpClient = _httpClient });
 
         var clientA = new StrategyClient(channelA);
         var clientB = new StrategyClient(channelB);
@@ -53,22 +62,31 @@ public class PlayingFieldService(ILogger<PlayingFieldService> logger) : PlayingF
         // Run the match for the specified number of rounds
         for (int round = 1; round <= request.Rounds; round++)
         {
-            // Invoke the strategies and pass the opponent's action from the previous round
-            var responseA = await clientA.HandleRequestAsync(new HandleRequestRequest { OpponentAction = (result?.AnswerB).ToOpponentAction() });
-            var responseB = await clientB.HandleRequestAsync(new HandleRequestRequest { OpponentAction = (result?.AnswerA).ToOpponentAction() });
-
-            // Create a RoundResult object to store the results of the current round
-            result = new RoundResult
+            try
             {
-                StrategyA = request.StrategyA,
-                StrategyB = request.StrategyB,
-                AnswerA = responseA.PlayerAction,
-                AnswerB = responseB.PlayerAction,
-                RoundNumber = round
-            };
+                // Invoke the strategies and pass the opponent's action from the previous round
+                var responseA = await clientA.HandleRequestAsync(new HandleRequestRequest { OpponentAction = (result?.AnswerB).ToOpponentAction() });
+                var responseB = await clientB.HandleRequestAsync(new HandleRequestRequest { OpponentAction = (result?.AnswerA).ToOpponentAction() });
 
-            // Send the results to the client
-            await responseStream.WriteAsync(result);
+                // Create a RoundResult object to store the results of the current round
+                result = new RoundResult
+                {
+                    StrategyA = request.StrategyA,
+                    StrategyB = request.StrategyB,
+                    AnswerA = responseA.PlayerAction,
+                    AnswerB = responseB.PlayerAction,
+                    RoundNumber = round
+                };
+
+                // Send the results to the client
+                await responseStream.WriteAsync(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new RpcException(new Status(StatusCode.Internal, "Error running the match."));
+            }
         }
     }
+
 }

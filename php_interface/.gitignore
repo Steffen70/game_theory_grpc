@@ -1,4 +1,4 @@
 # Generated gRPC files
 generated/*
-# Go build output
-tit_for_tat
+# Composer files
+vendor/*

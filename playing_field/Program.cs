@@ -24,7 +24,7 @@ var apiPort = int.Parse(Environment.GetEnvironmentVariable(ApiPortEnvironmentVar
 // Configure the Kestrel server with the certificate and the API port
 builder.WebHost.ConfigureKestrel(options => options.ListenLocalhost(apiPort, listenOptions =>
 {
-    listenOptions.UseHttps(new X509Certificate2(certSettings.Path, certSettings.Password));
+    listenOptions.UseHttps(new X509Certificate2($"{certSettings.Path}.pfx", certSettings.Password));
     // Enable HTTP/2 and HTTP/1.1 for gRPC-Web compatibility
     listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
 }));
@@ -43,6 +43,38 @@ builder.Services.AddCors(o => o.AddPolicy(CorsPolicyName, policyBuilder =>
 }));
 
 builder.Services.AddGrpc();
+
+builder.Services.AddSingleton(certSettings);
+
+builder.Services.AddHttpClient("customHttpClient")
+    .ConfigurePrimaryHttpMessageHandler(serviceProvider =>
+    {
+        var certificateSettings = serviceProvider.GetRequiredService<CertificateSettings>();
+        var logger = serviceProvider.GetRequiredService<ILogger>();
+
+        // Load the certificate from the environment variable
+        var certificate = new X509Certificate2($"{certificateSettings.Path}.crt");
+
+        // Expected thumbprint and issuer of the certificate for validation
+        var expectedThumbprint = certificate.Thumbprint;
+        var expectedIssuer = certificate.Issuer;
+
+        // Create the gRPC channels and clients with the custom certificate handler
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(certificate);
+        handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
+        {
+            // Validate the certificate issuer and thumbprint
+            if (cert?.Issuer == expectedIssuer && cert.Thumbprint == expectedThumbprint)
+                return true;
+
+            // Log an error if the certificate validation fails
+            logger.LogError("Certificate validation failed for {0}", cert?.Subject ?? "unknown");
+            return false;
+        };
+
+        return handler;
+    });
 
 var app = builder.Build();
 
