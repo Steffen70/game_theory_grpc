@@ -22,7 +22,7 @@
         # certificateSettings is a JSON string that contains the path to the certificate and the password for the pfx file.
         # - the path is defined without the extension
         # - Go and PHP will use the .crt and .key files
-        # - C# will use the .pfx file with the password
+        # - C# will use the .pfx file with the password + the .crt file to validate the certificate of the strategy services
         certificateSettings = ''
         {
           "path": "../cert/localhost",

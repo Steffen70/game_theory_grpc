@@ -4,6 +4,7 @@ using System.Text.Json;
 
 using Seventy.GameTheory.PlayingField.Model;
 using Seventy.GameTheory.PlayingField.Extensions;
+using System.Reflection.Metadata.Ecma335;
 
 const string CertificateSettingsEnvironmentVariable = "CERTIFICATE_SETTINGS";
 const string ApiPortEnvironmentVariable = "PLAYING_FIELD_PORT";
@@ -53,7 +54,7 @@ builder.Services.AddSingleton(certSettings);
 builder.Services.AddHttpClient(HttpClientName).ConfigurePrimaryHttpMessageHandler(serviceProvider =>
 {
     var certificateSettings = serviceProvider.GetRequiredService<CertificateSettings>();
-    var logger = serviceProvider.GetRequiredService<ILogger>();
+    var logger = serviceProvider.GetRequiredService<ILogger<GeneralLogContext>>();
 
     // Load the certificate from the environment variable
     var certificate = new X509Certificate2($"{certificateSettings.Path}.crt");
@@ -62,19 +63,14 @@ builder.Services.AddHttpClient(HttpClientName).ConfigurePrimaryHttpMessageHandle
     var expectedThumbprint = certificate.Thumbprint;
     var expectedIssuer = certificate.Issuer;
 
+    logger.LogInformation("Creating custom HttpClient with certificate handler for {0}", expectedIssuer);
+
     // Create the gRPC channels and clients with the custom certificate handler
     var handler = new HttpClientHandler();
     handler.ClientCertificates.Add(certificate);
-    handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
-    {
-        // Validate the certificate issuer and thumbprint
-        if (cert?.Issuer == expectedIssuer && cert.Thumbprint == expectedThumbprint)
-            return true;
 
-        // Log an error if the certificate validation fails
-        logger.LogError("Certificate validation failed for {0}", cert?.Subject ?? "unknown");
-        return false;
-    };
+    handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
+        cert?.Issuer == expectedIssuer && cert.Thumbprint == expectedThumbprint;
 
     return handler;
 });
@@ -84,6 +80,9 @@ builder.Services.AddHttpClient(HttpClientName).ConfigurePrimaryHttpMessageHandle
 builder.Services.AddTransient(serviceProvider =>
 {
     var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+    var logger = serviceProvider.GetRequiredService<ILogger<GeneralLogContext>>();
+
+    logger.LogInformation("Creating custom HttpClient with certificate handler");
 
     return httpClientFactory.CreateClient(HttpClientName);
 });
@@ -105,3 +104,6 @@ app.UseGrpcWeb(new() { DefaultEnabled = true });
 app.MapGrpcServices();
 
 app.Run();
+
+// Dummy class for logging
+public class GeneralLogContext { }
