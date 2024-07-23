@@ -18,7 +18,7 @@ class GrpcUtil
     {
         // Create a new PlayingFieldClient with the specified port and TLS credentials.
         return new PlayingFieldClient("localhost:$playingFieldPort", [
-            // Add ../ to the path, because we are in the Utils directory and the path is relative to the project root (php_interface)
+            // Add ../ to the path, because we are in the public directory and the path is relative to the project root (php_interface = ../)
             'credentials' => ChannelCredentials::createSsl(file_get_contents('../' . $certSettings['path'] . '.crt'))
         ]);
     }

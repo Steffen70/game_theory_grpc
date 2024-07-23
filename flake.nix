@@ -19,6 +19,13 @@
           unstable.php.extensions.protobuf
         ]);
 
+        # Create a custom Python environment with the necessary packages
+        myPython = unstable.python312.withPackages (ps: with ps; [
+          grpcio
+          grpcio-tools
+          protobuf
+        ]);
+
         # certificateSettings is a JSON string that contains the path to the certificate and the password for the pfx file.
         # - the path is defined without the extension
         # - Go and PHP will use the .crt and .key files
@@ -44,6 +51,7 @@
             unstable.grpc # C based gRPC
             myPhp
             unstable.php83Packages.composer # PHP dependency manager
+            myPython
           ];
 
           shellHook = ''
