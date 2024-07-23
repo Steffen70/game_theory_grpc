@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Text.Json;
 
 using Seventy.GameTheory.PlayingField.Model;
 using Seventy.GameTheory.PlayingField.Extensions;
@@ -12,9 +13,9 @@ const string CorsPolicyName = "ClientPolicy";
 var builder = WebApplication.CreateBuilder(args);
 
 // Get the certificate settings from the environment variable
-var certSettings = System.Text.Json.JsonSerializer.Deserialize<CertificateSettings>(
+var certSettings = JsonSerializer.Deserialize<CertificateSettings>(
     Environment.GetEnvironmentVariable(CertificateSettingsEnvironmentVariable) ?? throw new InvalidOperationException($"{CertificateSettingsEnvironmentVariable} environment variable not set"),
-    new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase }
+    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
 )!;
 
 // Get the API port from the environment variable
@@ -32,9 +33,12 @@ builder.WebHost.ConfigureKestrel(options => options.ListenLocalhost(apiPort, lis
 builder.Services.AddCors(o => o.AddPolicy(CorsPolicyName, policyBuilder =>
 {
     policyBuilder
-        .AllowAnyOrigin()
+        // Allow all ports on localhost
+        .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+        // Allow all methods and headers
         .AllowAnyMethod()
         .AllowAnyHeader()
+        // Expose the gRPC-Web headers
         .WithExposedHeaders("Grpc-Status", "Grpc-Message", "Grpc-Encoding", "Grpc-Accept-Encoding");
 }));
 

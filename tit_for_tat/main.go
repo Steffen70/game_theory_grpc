@@ -50,76 +50,107 @@ type CertificateSettings struct {
 }
 
 func main() {
-	// Get the certificate settings from the environment variable
+	certSettings := getCertificateSettings()
+	port := getEnvVariable(TitForTatPortEnvVar)
+	playingFieldPort := getEnvVariable(PlayingFieldPortEnvVar)
+
+	lis := createTCPListener(port)
+	serverCreds, clientCreds := loadTLSCredentials(certSettings)
+
+	strategyServer := createStrategyServer(serverCreds)
+	log.Printf("Server listening at %v", lis.Addr())
+
+	playingFieldAddr := fmt.Sprintf("localhost:%s", playingFieldPort)
+	conn, client := connectToPlayingField(playingFieldAddr, clientCreds)
+	defer conn.Close()
+
+	subscribeToPlayingField(client, port)
+
+	if err := strategyServer.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
+}
+
+// Read the certificate settings from the environment and parse them into a struct
+func getCertificateSettings() CertificateSettings {
 	certSettingsJson := os.Getenv(CertificateSettingsEnvVar)
 	if certSettingsJson == "" {
 		log.Fatalf("%s environment variable not set", CertificateSettingsEnvVar)
 	}
 
-	// Parse the certificate settings JSON
 	var certSettings CertificateSettings
 	if err := json.Unmarshal([]byte(certSettingsJson), &certSettings); err != nil {
 		log.Fatalf("Failed to parse certificate settings: %v", err)
 	}
 
-	// Get the port from the environment variable
-	port := os.Getenv(TitForTatPortEnvVar)
-	if port == "" {
-		log.Fatalf("%s environment variable not set", TitForTatPortEnvVar)
-	}
+	return certSettings
+}
 
-	// Get the playing field port from the environment variable
-	playingFieldPort := os.Getenv(PlayingFieldPortEnvVar)
-	if playingFieldPort == "" {
-		log.Fatalf("%s environment variable not set", PlayingFieldPortEnvVar)
+// Get an environment variable, and log an error if it is not set
+func getEnvVariable(varName string) string {
+	value := os.Getenv(varName)
+	if value == "" {
+		log.Fatalf("%s environment variable not set", varName)
 	}
+	return value
+}
 
-	// Create a TCP listener on the specified port
+// Create a TCP listener on the specified port
+func createTCPListener(port string) net.Listener {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
+	return lis
+}
 
-	// Load the TLS credentials from the certificate file
-	certPath, keyPath := fmt.Sprintf("%s.crt", certSettings.Path), fmt.Sprintf("%s.key", certSettings.Path)
-	creds, err := credentials.NewServerTLSFromFile(certPath, keyPath)
+// Load the TLS credentials from the specified certificate settings (public key and private key)
+func loadTLSCredentials(certSettings CertificateSettings) (credentials.TransportCredentials, credentials.TransportCredentials) {
+	publicKeyPath, privateKeyPath := fmt.Sprintf("%s.crt", certSettings.Path), fmt.Sprintf("%s.key", certSettings.Path)
+
+	// Load the server and client credentials from the public key and private key (private key credentials)
+	serverCreds, err := credentials.NewServerTLSFromFile(publicKeyPath, privateKeyPath)
 	if err != nil {
 		log.Fatalf("Failed to load TLS credentials: %v", err)
 	}
 
-	// Create a new gRPC server with the TLS credentials
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
+	// Load the client credentials from the public key (public key credentials)
+	// - used to access other services (e.g. PlayingField)
+	clientCreds, err := credentials.NewClientTLSFromFile(publicKeyPath, "localhost")
+	if err != nil {
+		log.Fatalf("Failed to load TLS credentials: %v", err)
+	}
 
-	// Register the strategy service with the gRPC server
-	pb.RegisterStrategyServer(grpcServer, &server{})
+	return serverCreds, clientCreds
+}
 
-	// Log the server listening address and start serving
-	log.Printf("Server listening at %v", lis.Addr())
+// Create a gRPC server with the private key credentials
+func createStrategyServer(creds credentials.TransportCredentials) *grpc.Server {
+	strategyServer := grpc.NewServer(grpc.Creds(creds))
+	pb.RegisterStrategyServer(strategyServer, &server{})
+	return strategyServer
+}
 
-	// TODO: Fix certifacte issue
-	// Connect to the PlayingField service
-	playingFieldAddr := fmt.Sprintf("localhost:%s", playingFieldPort)
+// Connect to the PlayingField service using the specified address and public key credentials
+func connectToPlayingField(playingFieldAddr string, creds credentials.TransportCredentials) (*grpc.ClientConn, pf.PlayingFieldClient) {
 	conn, err := grpc.NewClient(playingFieldAddr, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatalf("Failed to connect to PlayingField service: %v", err)
 	}
-	defer conn.Close()
 
-	playingFieldClient := pf.NewPlayingFieldClient(conn)
+	client := pf.NewPlayingFieldClient(conn)
+	return conn, client
+}
 
-	// Subscribe to the PlayingField service
+// Notify the PlayingField service that this strategy is available
+func subscribeToPlayingField(client pf.PlayingFieldClient, port string) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	_, err = playingFieldClient.Subscribe(ctx, &pf.StrategyInfo{
-		Name:    "TitForTatStrategy",
-		Address: fmt.Sprintf("localhost:%s", port),
+	_, err := client.Subscribe(ctx, &pf.StrategyInfo{
+		Name:    "Tit-for-Tat",
+		Address: fmt.Sprintf("https://localhost:%s", port),
 	})
 	if err != nil {
 		log.Fatalf("Failed to subscribe to PlayingField service: %v", err)
-	}
-
-	// Serve the gRPC server
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
 	}
 }

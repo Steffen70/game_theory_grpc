@@ -4,6 +4,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Seventy.GameTheory.PlayingField.Extensions;
 using Seventy.GameTheory.Strategy;
+using static Seventy.GameTheory.Strategy.Strategy;
 
 namespace Seventy.GameTheory.PlayingField.Services;
 
@@ -42,8 +43,8 @@ public class PlayingFieldService(ILogger<PlayingFieldService> logger) : PlayingF
         var channelA = GrpcChannel.ForAddress(strategyA.Address);
         var channelB = GrpcChannel.ForAddress(strategyB.Address);
 
-        var clientA = new Strategy.Strategy.StrategyClient(channelA);
-        var clientB = new Strategy.Strategy.StrategyClient(channelB);
+        var clientA = new StrategyClient(channelA);
+        var clientB = new StrategyClient(channelB);
 
         // Create a RoundResult object to store the results of each round
         // - set it outside the loop to store the previous round's results
