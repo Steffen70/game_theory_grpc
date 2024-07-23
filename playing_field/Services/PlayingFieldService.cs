@@ -10,17 +10,9 @@ using static Seventy.GameTheory.Strategy.Strategy;
 
 namespace Seventy.GameTheory.PlayingField.Services;
 
-public class PlayingFieldService : PlayingField.PlayingFieldBase
+public class PlayingFieldService(ILogger<PlayingFieldService> logger, HttpClient httpClient) : PlayingField.PlayingFieldBase
 {
     private static readonly ConcurrentDictionary<string, StrategyInfo> _strategies = new();
-    private readonly ILogger<PlayingFieldService> _logger;
-    private readonly HttpClient _httpClient;
-
-    public PlayingFieldService(ILogger<PlayingFieldService> logger, IHttpClientFactory httpClientFactory)
-    {
-        _logger = logger;
-        _httpClient = httpClientFactory.CreateClient("customHttpClient");
-    }
 
     public override Task<Empty> Subscribe(StrategyInfo info, ServerCallContext context)
     {
@@ -28,7 +20,7 @@ public class PlayingFieldService : PlayingField.PlayingFieldBase
         _strategies[info.Name] = info;
 
         // Log the subscription
-        _logger.LogInformation($"Strategy {info.Name} subscribed.");
+        logger.LogInformation($"Strategy {info.Name} subscribed.");
 
         // Return an empty response
         return Task.FromResult(new Empty());
@@ -49,8 +41,8 @@ public class PlayingFieldService : PlayingField.PlayingFieldBase
             throw new RpcException(new Status(StatusCode.NotFound, "One or both strategies not found."));
 
 
-        var channelA = GrpcChannel.ForAddress(strategyA.Address, new GrpcChannelOptions { HttpClient = _httpClient });
-        var channelB = GrpcChannel.ForAddress(strategyB.Address, new GrpcChannelOptions { HttpClient = _httpClient });
+        var channelA = GrpcChannel.ForAddress(strategyA.Address, new GrpcChannelOptions { HttpClient = httpClient });
+        var channelB = GrpcChannel.ForAddress(strategyB.Address, new GrpcChannelOptions { HttpClient = httpClient });
 
         var clientA = new StrategyClient(channelA);
         var clientB = new StrategyClient(channelB);
@@ -83,7 +75,7 @@ public class PlayingFieldService : PlayingField.PlayingFieldBase
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                logger.LogError(e.Message);
                 throw new RpcException(new Status(StatusCode.Internal, "Error running the match."));
             }
         }

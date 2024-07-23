@@ -9,6 +9,7 @@ const string CertificateSettingsEnvironmentVariable = "CERTIFICATE_SETTINGS";
 const string ApiPortEnvironmentVariable = "PLAYING_FIELD_PORT";
 
 const string CorsPolicyName = "ClientPolicy";
+const string HttpClientName = "CustomHttpClient";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,35 +47,46 @@ builder.Services.AddGrpc();
 
 builder.Services.AddSingleton(certSettings);
 
-builder.Services.AddHttpClient("customHttpClient")
-    .ConfigurePrimaryHttpMessageHandler(serviceProvider =>
+// Add custom HttpClient with the certificate handler to talk to the gRPC services
+// - The certificate is loaded from the environment variable and does not need to be installed on the machine
+// - First we need to create a factory for the HttpClient with the custom handler
+builder.Services.AddHttpClient(HttpClientName).ConfigurePrimaryHttpMessageHandler(serviceProvider =>
+{
+    var certificateSettings = serviceProvider.GetRequiredService<CertificateSettings>();
+    var logger = serviceProvider.GetRequiredService<ILogger>();
+
+    // Load the certificate from the environment variable
+    var certificate = new X509Certificate2($"{certificateSettings.Path}.crt");
+
+    // Expected thumbprint and issuer of the certificate for validation
+    var expectedThumbprint = certificate.Thumbprint;
+    var expectedIssuer = certificate.Issuer;
+
+    // Create the gRPC channels and clients with the custom certificate handler
+    var handler = new HttpClientHandler();
+    handler.ClientCertificates.Add(certificate);
+    handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
     {
-        var certificateSettings = serviceProvider.GetRequiredService<CertificateSettings>();
-        var logger = serviceProvider.GetRequiredService<ILogger>();
+        // Validate the certificate issuer and thumbprint
+        if (cert?.Issuer == expectedIssuer && cert.Thumbprint == expectedThumbprint)
+            return true;
 
-        // Load the certificate from the environment variable
-        var certificate = new X509Certificate2($"{certificateSettings.Path}.crt");
+        // Log an error if the certificate validation fails
+        logger.LogError("Certificate validation failed for {0}", cert?.Subject ?? "unknown");
+        return false;
+    };
 
-        // Expected thumbprint and issuer of the certificate for validation
-        var expectedThumbprint = certificate.Thumbprint;
-        var expectedIssuer = certificate.Issuer;
+    return handler;
+});
 
-        // Create the gRPC channels and clients with the custom certificate handler
-        var handler = new HttpClientHandler();
-        handler.ClientCertificates.Add(certificate);
-        handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, certChain, policyErrors) =>
-        {
-            // Validate the certificate issuer and thumbprint
-            if (cert?.Issuer == expectedIssuer && cert.Thumbprint == expectedThumbprint)
-                return true;
+// Add the custom HttpClient to the service provider
+// - The HttpClient is created using the factory with the custom handler
+builder.Services.AddTransient(serviceProvider =>
+{
+    var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
-            // Log an error if the certificate validation fails
-            logger.LogError("Certificate validation failed for {0}", cert?.Subject ?? "unknown");
-            return false;
-        };
-
-        return handler;
-    });
+    return httpClientFactory.CreateClient(HttpClientName);
+});
 
 var app = builder.Build();
 
