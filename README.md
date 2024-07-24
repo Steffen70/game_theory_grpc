@@ -1,0 +1,104 @@
+# Game Theory gRPC Sample Project
+
+This repository demonstrates a game theory scenario using multiple services written in different languages, all communicating via gRPC. The project showcases gRPC server-client interactions, server-side rendering with PHP, and the integration of different programming languages through gRPC.
+
+## TODO
+
+-   [ ] Refactor `flake.nix` into smaller, separate files for each service; create a main `flake.nix` that imports all the service-specific files.
+-   [ ] Test the Friedman Python strategy service.
+-   [ ] Test the PHP interface by running a matchup between Friedman and Tit-for-Tat.
+-   [ ] Implement a React web app for displaying `RoundResults` in real-time using gRPC-Web, and embed it in the `index.php`.
+-   [ ] Implement CI/CD with Docker, using Nix flakes to install dependencies inside the Docker container.
+-   [ ] Create an Auth-Provider service that uses OpenIddict to authenticate against a local user database.
+-   [ ] Secure all services with the custom Auth-Provider (OAuth2.0/OpenId).
+
+## Overview
+
+### Services
+
+-   **Main Service (`playing_field`)**: The central hub that orchestrates the game theory matchups. Written in C# using ASP.NET Core.
+-   **PHP Web Interface (`php_interface`)**: A PHP-based web interface that interacts with the `playing_field` service, allowing users to initiate matchups and view results.
+-   **Strategy Services**: Individual services that implement specific game theory strategies. Each service communicates with the `playing_field` service and acts as a gRPC server.
+
+### Strategy Implementations
+
+-   **Tit-for-Tat Strategy (`tit_for_tat`)**: Implemented in Go.
+-   **Friedman Strategy (`friedman`)**: Implemented in Python.
+
+## Getting Started
+
+### Prerequisites
+
+-   **Nix**: For managing dependencies and environment setup.
+-   Code editor of choice: VSCode, Rider, PyCharm, PHPStorm, etc.
+
+Run `nix develop` to install all dependencies and set the required environment variables.
+
+Then enter the code editor from your shell to make sure the IDE/Editor will get the required context/path variables set by `nix develop`, e.g., `code .`.
+
+## Setup
+
+### Main Service - `playing_field`
+
+This service is the main orchestrator, handling strategy subscriptions and running matchups. It's available over gRPC and gRPC-Web.
+
+```powershell
+# Navigate to the playing_field directory
+cd ./playing_field
+
+# Run the main service
+dotnet run
+```
+
+### PHP Web Interface - `php_interface`
+
+The PHP web interface demonstrates server-side rendering with gRPC data. It interacts with the `playing_field` service to load subscribed strategies and initiate matchups.
+
+```powershell
+# Navigate to the php_interface directory
+cd ./php_interface
+
+# Generate the PHP gRPC client stubs
+./generate_php.sh
+
+# Navigate to the public directory
+cd ./public
+
+# Start the PHP built-in server
+php -S localhost:$env:PHP_INTERFACE_PORT
+```
+
+### Strategy Services
+
+Each strategy service implements a specific game theory strategy and communicates with the `playing_field` service.
+
+#### Go Strategy Service - `tit_for_tat`
+
+```powershell
+# Navigate to the tit_for_tat directory
+cd ./tit_for_tat
+
+# Generate the Go gRPC client and server stubs
+./generate_go.sh
+
+# Build the Go service
+go build
+
+# Run the Tit-for-Tat strategy service
+# - The playing_field service has to be started first
+./tit_for_tat
+```
+
+#### Python Strategy Service - `friedman`
+
+```powershell
+# Navigate to the friedman directory
+cd ./friedman
+
+# Generate the Python gRPC client and server stubs
+./generate_py.sh
+
+# Run the Friedman strategy service
+# - The playing_field service has to be started first
+python3 friedman_strategy.py
+```
