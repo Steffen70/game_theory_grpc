@@ -1,10 +1,20 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * 
+ * Author: Steffen70 <steffen@seventy.mx>
+ * Creation Date: 2024-07-25
+ * 
+ * Contributors:
+ * - Contributor Name <contributor@example.com>
+ */
+
 using System.Collections.Concurrent;
-using System.Security.Cryptography.X509Certificates;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Seventy.GameTheory.PlayingField.Extensions;
-using Seventy.GameTheory.PlayingField.Model;
 using Seventy.GameTheory.Strategy;
 using static Seventy.GameTheory.Strategy.Strategy;
 

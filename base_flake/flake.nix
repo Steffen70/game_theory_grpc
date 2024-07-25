@@ -1,3 +1,15 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * 
+ * Author: Steffen70 <steffen@seventy.mx>
+ * Creation Date: 2024-07-25
+ * 
+ * Contributors:
+ * - Contributor Name <contributor@example.com>
+ */
+
 {
   description = "This is a base flake that should be included in all service specific flakes.";
 
@@ -12,6 +24,16 @@
         unstable = import nixpkgs {
           inherit system;
         };
+
+        licenseHeader = ''
+          @'
+          ===================================================================
+          This Source Code Form is subject to the terms of the Mozilla Public
+          License, v. 2.0. If a copy of the MPL was not distributed with this
+          file, You can obtain one at https://mozilla.org/MPL/2.0/.
+          ===================================================================
+          '@
+        '';
 
         # certificateSettings is a JSON string that contains the path to the certificate (without the extension) and the password for the pfx file.
         certificateSettings = ''
@@ -39,8 +61,10 @@
 
             export CERTIFICATE_SETTINGS='${certificateSettings}'
 
-            # Enter PowerShell
-            pwsh
+            # Enter PowerShell and output the licenseHeader
+            pwsh -NoExit -Command "& {
+              Write-Host ${licenseHeader}
+            }"
 
             # Exit when PowerShell exits
             exit 0

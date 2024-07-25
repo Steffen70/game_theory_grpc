@@ -1,10 +1,21 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * 
+ * Author: Steffen70 <steffen@seventy.mx>
+ * Creation Date: 2024-07-25
+ * 
+ * Contributors:
+ * - Contributor Name <contributor@example.com>
+ */
+
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json;
 
 using Seventy.GameTheory.PlayingField.Model;
 using Seventy.GameTheory.PlayingField.Extensions;
-using System.Reflection.Metadata.Ecma335;
 
 const string CertificateSettingsEnvironmentVariable = "CERTIFICATE_SETTINGS";
 const string ApiPortEnvironmentVariable = "PLAYING_FIELD_PORT";
