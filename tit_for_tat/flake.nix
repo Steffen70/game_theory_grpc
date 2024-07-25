@@ -7,7 +7,7 @@
     flake-utils.follows = "baseFlake/flake-utils";
   };
 
-  outputs = { ... } @ inputs:
+  outputs = { self, ... } @ inputs:
     inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         unstable = import inputs.nixpkgs {
