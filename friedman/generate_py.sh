@@ -23,11 +23,11 @@ currentDirectory=${PWD##*/}
 protosArray=("model" "strategy" "playing_field")
 
 # Base protoc command
-protoCommand="python -m grpc_tools.protoc --proto_path=../protos --python_out=./${generatedDirectory} --grpc_python_out=./${generatedDirectory}"
+protoCommand="python -m grpc_tools.protoc --proto_path=$PROTOBUF_PATH --python_out=./${generatedDirectory} --grpc_python_out=./${generatedDirectory}"
 
 # Add proto files to the command
 for proto in "${protosArray[@]}"; do
-    protoCommand+=" ../protos/${proto}.proto"
+    protoCommand+=" $PROTOBUF_PATH/${proto}.proto"
 done
 
 # Execute the final protoc command

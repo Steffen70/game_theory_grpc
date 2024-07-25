@@ -23,7 +23,7 @@ currentDirectory=${PWD##*/}
 protosArray=("model" "strategy" "playing_field")
 
 # Base protoc command
-protoCommand="protoc --proto_path=../protos --go_out=.. --go-grpc_out=.."
+protoCommand="protoc --proto_path=$PROTOBUF_PATH --go_out=.. --go-grpc_out=.."
 
 # Add package mapping options for each proto file
 for proto in "${protosArray[@]}"; do
@@ -33,7 +33,7 @@ done
 
 # Add proto files to the command
 for proto in "${protosArray[@]}"; do
-    protoCommand+=" ../protos/${proto}.proto"
+    protoCommand+=" $PROTOBUF_PATH/${proto}.proto"
 done
 
 # Execute the final protoc command

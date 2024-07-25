@@ -26,9 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="../protos/model.proto" />
-    <Protobuf Include="../protos/playing_field.proto" GrpcServices="Server" />
-    <Protobuf Include="../protos/strategy.proto" GrpcServices="Client" />
+    <Protobuf Include="$(PROTOBUF_PATH)/model.proto" />
+    <Protobuf Include="$(PROTOBUF_PATH)/playing_field.proto" GrpcServices="Server" />
+    <Protobuf Include="$(PROTOBUF_PATH)/strategy.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
