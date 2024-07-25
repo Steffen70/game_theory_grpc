@@ -32,10 +32,10 @@
             # Set the shell to PowerShell - vscode will use this shell
             export SHELL="${unstable.powershell}/bin/pwsh"
 
-            export PHP_INTERFACE_PORT=5000
-            export PLAYING_FIELD_PORT=5001
-            export TIT_FOR_TAT_PORT=5002
-            export FRIEDMAN_PORT=5003
+            export PHP_INTERFACE_PORT=5001
+            export PLAYING_FIELD_PORT=5002
+            export TIT_FOR_TAT_PORT=5003
+            export FRIEDMAN_PORT=5004
 
             export CERTIFICATE_SETTINGS='${certificateSettings}'
 

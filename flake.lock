@@ -7,7 +7,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-nyEAPWIuGCX4eeyTVc2TXbuYjm6pNw+bXxCiHsHeN7Y=",
+        "narHash": "sha256-KhUSSznzOHHC+yOst9FHmjoqoqwu7kvtgiaQYe822b8=",
         "path": "./base_flake",
         "type": "path"
       },
@@ -186,7 +186,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-4UVZ5+FhxuDHcRv1pqDyJT+eAh3RU4iAgXU0upKxw78=",
+        "narHash": "sha256-2Ps1ShPvwuhfjehxWbesVScaqSstQ8js5D/0wTMVfcE=",
         "path": "./friedman",
         "type": "path"
       },
@@ -291,7 +291,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-SN5+7j2iUCCCnZB26+AxQcn59lnpxW1RtH7lByGMouk=",
+        "narHash": "sha256-hfRrHOuQYfBIOnXBS4luoABofBRozuN6W186rgHLYFU=",
         "path": "./php_interface",
         "type": "path"
       },
@@ -316,7 +316,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-xSD/Tn4aV0+4TCvu5kObPM3o+qsE0JTbjwZdtdHkeh0=",
+        "narHash": "sha256-7jpXgS3ypdphe0/yd75TJf3Gb0XJBLhDr9/ubjPSdrY=",
         "path": "./playing_field",
         "type": "path"
       },
@@ -433,7 +433,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-Y+LzPPO1cq17cR88RaU/GUbXvsXqrq1P96pMLnorhbY=",
+        "narHash": "sha256-nAdkCdD8CwG+yiDURBQidQ82ogJ2PpK5cm+gf77sCJQ=",
         "path": "./tit_for_tat",
         "type": "path"
       },
