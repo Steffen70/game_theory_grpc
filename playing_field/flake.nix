@@ -2,7 +2,7 @@
   description = "A development environment for working with dotnet 8 and PowerShell.";
 
   inputs = {
-    baseFlake.url = "path:../base_flake";
+    baseFlake.url = "path:./base_flake";
     nixpkgs.url = "baseFlake/nixpkgs/";
     flake-utils.url = "baseFlake/flake-utils";
   };
