@@ -1,17 +1,20 @@
 {
-  description = "A development environment for with Python and PowerShell.";
+  description = "A development environment for working with Python and gRPC.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    baseFlake.url = "path:../base_flake";
+    nixpkgs.follows = "baseFlake/nixpkgs";
+    flake-utils.follows = "baseFlake/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs = { ... } @ inputs:
+    inputs.flake-utils.lib.eachDefaultSystem (system:
       let
-        unstable = import nixpkgs {
+        unstable = import inputs.nixpkgs {
           inherit system;
         };
+
+        baseDevShell = inputs.baseFlake.outputs.devShell.${system};
 
         # Create a custom Python environment with the necessary packages
         myPython = unstable.python312.withPackages (ps: with ps; [
@@ -19,38 +22,14 @@
           grpcio-tools
           protobuf
         ]);
-
-        # certificateSettings is a JSON string that contains the path to the certificate (without the extension) and the password for the pfx file.
-        certificateSettings = ''
-        {
-          "path": "../cert/localhost",
-          "password": "fancyspy10"
-        }
-        '';
       in
       {
         devShell = unstable.mkShell {
-          buildInputs = [
-            unstable.git
-            unstable.powershell
+          buildInputs = baseDevShell.buildInputs ++ [
             myPython
           ];
 
-          shellHook = ''
-            # Set the shell to PowerShell - vscode will use this shell
-            export SHELL="${unstable.powershell}/bin/pwsh"
-
-            export PLAYING_FIELD_PORT=5001
-            export FRIEDMAN_PORT=5003
-
-            export CERTIFICATE_SETTINGS='${certificateSettings}'
-
-            # Enter PowerShell
-            pwsh
-
-            # Exit when PowerShell exits
-            exit 0
-          '';
+          shellHook = baseDevShell.shellHook;
         };
       }
     );

@@ -28,12 +28,23 @@
             unstable.powershell
           ];
 
-          # Set the shell to PowerShell - vscode will use this shell
-          shell = "${unstable.powershell}/bin/pwsh"
+          shellHook = ''
+            # Set the shell to PowerShell - vscode will use this shell
+            export SHELL="${unstable.powershell}/bin/pwsh"
 
-          env = {
-            CERTIFICATE_SETTINGS = "${certificateSettings}";
-          };
+            export PHP_INTERFACE_PORT=5000
+            export PLAYING_FIELD_PORT=5001
+            export TIT_FOR_TAT_PORT=5002
+            export FRIEDMAN_PORT=5003
+
+            export CERTIFICATE_SETTINGS='${certificateSettings}'
+
+            # Enter PowerShell
+            pwsh
+
+            # Exit when PowerShell exits
+            exit 0
+          '';
         };
       }
     );

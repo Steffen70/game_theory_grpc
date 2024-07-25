@@ -1,24 +1,20 @@
 {
-  description = "A development environment for working with dotnet 8 and PowerShell.";
+  description = "A development environment for working with dotnet 8.";
 
   inputs = {
-    baseFlake.url = "path:./base_flake";
-    nixpkgs.url = "baseFlake/nixpkgs/";
-    flake-utils.url = "baseFlake/flake-utils";
+    baseFlake.url = "path:../base_flake";
+    nixpkgs.follows = "baseFlake/nixpkgs";
+    flake-utils.follows = "baseFlake/flake-utils";
   };
 
-  outputs = { self, flake-utils, ... } @ inputs:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs = { ... } @ inputs:
+    inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         unstable = import inputs.nixpkgs {
           inherit system;
         };
 
-        baseFlake = import inputs.baseFlake {
-            inherit system;
-        };
-
-        baseDevShell = baseFlake.devShell;
+        baseDevShell = inputs.baseFlake.outputs.devShell.${system};
       in
       {
         devShell = unstable.mkShell {
@@ -26,11 +22,7 @@
             unstable.dotnet-sdk_8
           ];
 
-          shell = baseDevShell.shell;
-
-          env = baseDevShell.env // {
-            PLAYING_FIELD_PORT = "5001";
-          };
+          shellHook = baseDevShell.shellHook;
         };
       }
     );
