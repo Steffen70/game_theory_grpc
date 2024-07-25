@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "baseFlake": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-888GQw175Z2BbnW8qMGyLL4u/MBO+EAcPbTD6fS/phc=",
-        "path": "../base_flake",
-        "type": "path"
-      },
-      "original": {
-        "path": "../base_flake",
-        "type": "path"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -52,15 +36,8 @@
     },
     "root": {
       "inputs": {
-        "baseFlake": "baseFlake",
-        "flake-utils": [
-          "baseFlake",
-          "flake-utils"
-        ],
-        "nixpkgs": [
-          "baseFlake",
-          "nixpkgs"
-        ]
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {

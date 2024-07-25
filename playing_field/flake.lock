@@ -7,7 +7,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-nyEAPWIuGCX4eeyTVc2TXbuYjm6pNw+bXxCiHsHeN7Y=",
+        "narHash": "sha256-888GQw175Z2BbnW8qMGyLL4u/MBO+EAcPbTD6fS/phc=",
         "path": "../base_flake",
         "type": "path"
       },
