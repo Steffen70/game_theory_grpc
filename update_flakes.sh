@@ -18,7 +18,14 @@ for dir in "$script_dir"/*/; do
   # Check if the directory contains a flake.nix file
   if [ -f "$dir/flake.nix" ]; then
     echo "Updating flake in directory: $dir"
-    (cd "$dir" && nix flake update)
+    # Check if the directory contains a flake.lock file
+    if [ -f "$dir/flake.lock" ]; then
+      # Update the flake
+      (cd "$dir" && nix flake update)
+    else
+      # Create a lock file
+      (cd "$dir" && nix flake lock)
+    fi
   fi
 done
 

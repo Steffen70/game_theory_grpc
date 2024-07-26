@@ -1,0 +1,18 @@
+[submodule "base_flake"]
+	path = base_flake
+	url = ./base_flake
+[submodule "friedman"]
+	path = friedman
+	url = ./friedman
+[submodule "php_interface"]
+	path = php_interface
+	url = ./php_interface
+[submodule "playing_field"]
+	path = playing_field
+	url = ./playing_field
+[submodule "tit_for_tat"]
+	path = tit_for_tat
+	url = ./tit_for_tat
+[submodule "protos"]
+	path = protos
+	url = ./protos

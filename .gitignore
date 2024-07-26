@@ -3,4 +3,4 @@
 # Visual Studio Code specific directory
 .vscode/
 # Nix build output
-**/result
+result
