@@ -14,14 +14,14 @@
   description = "A development environment that combines all the other development environments.";
 
   inputs = {
-    base_flake.url = "git+file:///workspace/game_theory_grpc/base_flake";
-    nixpkgs.follows = "base_flake/nixpkgs";
-    flake-utils.follows = "base_flake/flake-utils";
+    base_flake.url = "github:seventymx/game_theory_grpc_base_flake";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
 
-    playing_field.url = "git+file:///workspace/game_theory_grpc/playing_field";
-    tit_for_tat.url = "git+file:///workspace/game_theory_grpc/tit_for_tat";
-    friedman.url = "git+file:///workspace/game_theory_grpc/friedman";
-    php_interface.url = "git+file:///workspace/game_theory_grpc/php_interface";
+    playing_field.url = "github:seventymx/game_theory_grpc_playing_field";
+    tit_for_tat.url = "github:seventymx/game_theory_grpc_tit_for_tat";
+    friedman.url = "github:seventymx/game_theory_grpc_friedman";
+    php_interface.url = "github:seventymx/game_theory_grpc_php_interface";
   };
 
   outputs =

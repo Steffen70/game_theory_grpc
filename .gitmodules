@@ -1,18 +1,18 @@
 [submodule "base_flake"]
 	path = base_flake
-	url = ./base_flake
+	url = https://github.com/seventymx/game_theory_grpc_base_flake
 [submodule "friedman"]
 	path = friedman
-	url = ./friedman
+	url = https://github.com/seventymx/game_theory_grpc_friedman
 [submodule "php_interface"]
 	path = php_interface
-	url = ./php_interface
+	url = https://github.com/seventymx/game_theory_grpc_php_interface
 [submodule "playing_field"]
 	path = playing_field
-	url = ./playing_field
+	url = https://github.com/seventymx/game_theory_grpc_playing_field
 [submodule "tit_for_tat"]
 	path = tit_for_tat
-	url = ./tit_for_tat
+	url = https://github.com/seventymx/game_theory_grpc_tit_for_tat
 [submodule "protos"]
 	path = protos
-	url = ./protos
+	url = https://github.com/seventymx/game_theory_grpc_protos
