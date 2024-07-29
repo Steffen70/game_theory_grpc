@@ -7,11 +7,11 @@
         "protos": "protos"
       },
       "locked": {
-        "lastModified": 1722026482,
-        "narHash": "sha256-0/DsA1nSMlumjbRdHl7Dc+lGQcXTE4z8dwvWarJoVIY=",
+        "lastModified": 1722262089,
+        "narHash": "sha256-yAv+dqxNIrOA83YGAxERgf1CMtvmyl9aNPfTPrAPEU8=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_base_flake",
-        "rev": "7655c2087ea1c2cecda15485bc507946a34a7a2a",
+        "rev": "e239818181c9ac500ed9fdf07b9442b9f16a6794",
         "type": "github"
       },
       "original": {
@@ -67,11 +67,11 @@
         "protos": "protos_4"
       },
       "locked": {
-        "lastModified": 1722026482,
-        "narHash": "sha256-0/DsA1nSMlumjbRdHl7Dc+lGQcXTE4z8dwvWarJoVIY=",
+        "lastModified": 1722262089,
+        "narHash": "sha256-yAv+dqxNIrOA83YGAxERgf1CMtvmyl9aNPfTPrAPEU8=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_base_flake",
-        "rev": "7655c2087ea1c2cecda15485bc507946a34a7a2a",
+        "rev": "e239818181c9ac500ed9fdf07b9442b9f16a6794",
         "type": "github"
       },
       "original": {
@@ -657,11 +657,11 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1722027530,
-        "narHash": "sha256-2xeBZZKYQvQrkgdu91lutjTTR82dKKVhTn55FtaYV08=",
+        "lastModified": 1722265863,
+        "narHash": "sha256-lc8YVGZ1nHPNyoO/jdJq5Tl4oXGTTud6xGnK0knEKEA=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_playing_field",
-        "rev": "5bb5d02eed6951cca578070b8766a5799f6541df",
+        "rev": "73c7fc1db8b4ff5087ebf79cc58f6f53676a2ef5",
         "type": "github"
       },
       "original": {

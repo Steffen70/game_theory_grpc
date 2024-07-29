@@ -7,8 +7,8 @@ This repository demonstrates a game theory scenario using multiple services writ
 -   [x] Refactor `flake.nix` into smaller, separate files for each service; create a main `flake.nix` that imports all the service-specific files.
 -   [ ] Add a package output to each service's `flake.nix` to build a standalone package for each service.
 -   [ ] Add a package output to the main flake to build all services as a single package.
--   [ ] Test the Friedman Python strategy service.
--   [ ] Test the PHP interface by running a matchup between Friedman and Tit-for-Tat.
+-   [x] Test the Friedman Python strategy service.
+-   [x] Test the PHP interface by running a matchup between Friedman and Tit-for-Tat.
 -   [ ] Implement a React web app for displaying `RoundResults` in real-time using gRPC-Web, and embed it in the `index.php`.
 -   [ ] Implement CI/CD with Docker, using Nix flakes to install dependencies inside the Docker container.
 -   [ ] Create an Auth-Provider service that uses OpenIddict to authenticate against a local user database.
