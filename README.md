@@ -37,3 +37,32 @@ This repository demonstrates a game theory scenario using multiple services writ
 Run `nix develop` to install all dependencies and set the required environment variables.
 
 Then enter the code editor from your shell to make sure the IDE/Editor will get the required context/path variables set by `nix develop`, e.g., `code .`.
+
+### How to Run the Project
+
+1. **Run the `playing_field` Service**:
+
+    - Navigate to the `playing_field` directory.
+    - Follow the instructions in `playing_field/README.md` to start the service.
+
+2. **Run the `friedman` Service**:
+
+    - Open a new terminal window.
+    - Navigate to the `friedman` directory.
+    - Follow the instructions in `friedman/README.md` to start the service.
+
+3. **Run the `tit_for_tat` Service**:
+
+    - Open another terminal window.
+    - Navigate to the `tit_for_tat` directory.
+    - Follow the instructions in `tit_for_tat/README.md` to start the service.
+
+4. **Run the `php_interface` Service**:
+
+    - Open yet another terminal window.
+    - Navigate to the `php_interface` directory.
+    - Follow the instructions in `php_interface/README.md` to start the service.
+
+5. **Run a Match Between Friedman and Tit-for-Tat**:
+    - Access the PHP web interface as described in `php_interface/README.md`.
+    - Use the interface to initiate a matchup between the Friedman strategy and the Tit-for-Tat strategy.

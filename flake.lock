@@ -377,11 +377,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1722026535,
-        "narHash": "sha256-1A+oM3maw4D1AdXAUTykqcamFjK18emDy61XEan5RFY=",
+        "lastModified": 1722259316,
+        "narHash": "sha256-u1iXCvsX/4Y/xSCXPiXOKfsQz53S1ayJXg8G+IKdaZY=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_friedman",
-        "rev": "93303ecbc6964de26e56f6f9659d6f9547dc6ff0",
+        "rev": "bece58e2c7a813385030c6c571206b16a634bf48",
         "type": "github"
       },
       "original": {
