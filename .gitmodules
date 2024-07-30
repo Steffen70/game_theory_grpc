@@ -13,6 +13,3 @@
 [submodule "tit_for_tat"]
 	path = tit_for_tat
 	url = https://github.com/seventymx/game_theory_grpc_tit_for_tat
-[submodule "protos"]
-	path = protos
-	url = https://github.com/seventymx/game_theory_grpc_protos
