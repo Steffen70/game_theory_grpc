@@ -31,7 +31,7 @@
       let
         unstable = import inputs.nixpkgs { inherit system; };
 
-        baseDevShell = inputs.base_flake.outputs.devShell.${system};
+        baseDevShell = inputs.base_flake.devShell.${system};
 
         allShells = [
           inputs.playing_field
@@ -40,7 +40,7 @@
           inputs.php_interface
         ];
 
-        devShells = map (input: input.outputs.devShell.${system}) allShells;
+        devShells = map (input: input.devShell.${system}) allShells;
 
         concatMap = f: list: unstable.lib.flatten (map f list);
 
