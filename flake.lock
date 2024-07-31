@@ -282,11 +282,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1722358946,
-        "narHash": "sha256-3oMVsjNjOGoAZGI9zaJFMYkneQi81N4Wgdi24M75omA=",
+        "lastModified": 1722419765,
+        "narHash": "sha256-t74227Vu1/tdiVoinF0HaTtPlP1OrNNjUvmYAchIONs=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_friedman",
-        "rev": "d7e0e4de0038923972aa7fd90470434ea6ffa9aa",
+        "rev": "83fa32855a528dd8802bcfe9651cfad4fd735611",
         "type": "github"
       },
       "original": {
@@ -462,11 +462,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1722359021,
-        "narHash": "sha256-6Z7QoMIa0B+tyhWcm3gUXUn6cN0G5vJfgjttxr3ZDQg=",
+        "lastModified": 1722419749,
+        "narHash": "sha256-2vlJ5yYIsPBM/hCiBt7Wy2jMvG9z3et+wEMYjRAdDKg=",
         "owner": "seventymx",
         "repo": "game_theory_grpc_php_interface",
-        "rev": "1c52d1de1222b9a1f343f5a48da3bba4d8171857",
+        "rev": "ee1c2d20161c859c15260791423f7edce6064d90",
         "type": "github"
       },
       "original": {
